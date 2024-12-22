@@ -1,9 +1,17 @@
+import { checkHealth } from "./checkhealth";
+import { INPUT_DIR } from "./envvars";
 import { renameFilesInDirectory } from "./rename";
 
 async function main() {
-  const dirPath = "./test-dir";
+  try {
+    checkHealth();
+  } catch (error) {
+    console.error("There was an error checking the environment:", error);
+    return;
+  }
 
-  await renameFilesInDirectory(dirPath);
+  // This will exist because checkhealth will throw otherwise
+  await renameFilesInDirectory(INPUT_DIR!);
 }
 
 await main();
