@@ -14,6 +14,9 @@ const padNumber = (num: number) => String(num).padStart(2, "0");
 const numberToFileName = (num: number) =>
   `${MOVIE_PREFIX}${padNumber(num)}.mkv`;
 
+process.env.INPUT_DIR = TEST_DIR;
+process.env.OUTPUT_DIR = TEST_DIR;
+
 describe("File renaming e2e test", () => {
   beforeAll(async () => {
     try {
