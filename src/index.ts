@@ -1,6 +1,10 @@
 import { checkHealth } from "./checkhealth";
 import { renameFilesInDirectory } from "./rename";
 
+const checkForNewFiles = async () => {
+  return false;
+};
+
 async function main() {
   try {
     checkHealth();
@@ -9,8 +13,11 @@ async function main() {
     return;
   }
 
-  // This will exist because checkhealth will throw otherwise
-  await renameFilesInDirectory();
+  while (true) {
+    if (await checkForNewFiles()) {
+      await renameFilesInDirectory();
+    }
+  }
 }
 
 await main();
