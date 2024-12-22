@@ -1,8 +1,5 @@
-import OpenAI from "openai";
-const openai = new OpenAI();
 import { readdir, unlink } from "node:fs/promises";
-import { z } from "zod";
-import { zodResponseFormat } from "openai/helpers/zod.mjs";
+import { openai, responseFormat, responseSchema } from "./openai/client";
 
 const fileNames = await readdir("./test-dir", {
   recursive: true,
@@ -21,16 +18,9 @@ const files = fileNames.map((fileName) => {
   };
 });
 
-const responseSchema = z.object({
-  mainTitle: z.object({
-    currentName: z.string(),
-    newName: z.string(),
-  }),
-});
-
 const completion = await openai.chat.completions.create({
   model: "gpt-4o-mini",
-  response_format: zodResponseFormat(responseSchema, "event"),
+  response_format: responseFormat,
   messages: [
     {
       role: "system",
