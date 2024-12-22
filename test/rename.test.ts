@@ -4,7 +4,7 @@ import { readdir, rm, mkdir } from "node:fs/promises";
 import path from "node:path";
 
 const TEST_DIR = path.resolve("./test-dir");
-const SCRIPT_PATH = path.resolve("./index.ts");
+const SCRIPT_PATH = path.resolve("./src/index.ts");
 
 describe("File renaming e2e test", () => {
   beforeAll(async () => {
