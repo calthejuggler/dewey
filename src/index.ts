@@ -1,5 +1,4 @@
 import { checkHealth } from "./checkhealth";
-import { INPUT_DIR } from "./envvars";
 import { renameFilesInDirectory } from "./rename";
 
 async function main() {
@@ -11,7 +10,7 @@ async function main() {
   }
 
   // This will exist because checkhealth will throw otherwise
-  await renameFilesInDirectory(INPUT_DIR!);
+  await renameFilesInDirectory();
 }
 
 await main();

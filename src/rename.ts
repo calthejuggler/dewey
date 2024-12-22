@@ -1,12 +1,17 @@
 import { readdir, unlink, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { openai, responseSchema, responseFormat } from "./openai/client";
+import { INPUT_DIR, OUTPUT_DIR } from "./envvars";
 
-export async function renameFilesInDirectory(dirPath: string): Promise<void> {
-  const fileNames = await readdir(dirPath, { recursive: true });
+export async function renameFilesInDirectory(): Promise<void> {
+  if (!INPUT_DIR) throw new Error("No INPUT_DIR");
+  if (!OUTPUT_DIR) throw new Error("No OUTPUT_DIR");
+
+  const fileNames = await readdir(INPUT_DIR, { recursive: true });
 
   const files = fileNames.map((fileName) => {
-    const fullPath = path.join(dirPath, fileName);
+    if (!INPUT_DIR) throw new Error("No INPUT_DIR");
+    const fullPath = path.join(INPUT_DIR, fileName);
     const file = Bun.file(fullPath);
 
     return {
@@ -46,15 +51,15 @@ export async function renameFilesInDirectory(dirPath: string): Promise<void> {
     }
 
     // Copy file to new location
-    const newFilePath = path.join(dirPath, mainTitle.newName);
+    const newFilePath = path.join(OUTPUT_DIR, mainTitle.newName);
     await Bun.write(newFilePath, title.file);
 
     // Delete old file
-    const oldFilePath = path.join(dirPath, title.name);
+    const oldFilePath = path.join(INPUT_DIR, title.name);
     await unlink(oldFilePath);
 
     // Create extras directory
-    await mkdir(path.join(dirPath, "extras"), { recursive: true });
+    await mkdir(path.join(OUTPUT_DIR, "extras"), { recursive: true });
 
     // Move non-main files to extras directory
     for (const file of files) {
@@ -64,8 +69,8 @@ export async function renameFilesInDirectory(dirPath: string): Promise<void> {
       )
         continue;
 
-      await Bun.write(path.join(dirPath, "extras", file.name), file.file);
-      await unlink(path.join(dirPath, file.name));
+      await Bun.write(path.join(OUTPUT_DIR, "extras", file.name), file.file);
+      await unlink(path.join(INPUT_DIR, file.name));
     }
   } catch (error) {
     console.error("There was an error parsing the OpenAI response:", error);
