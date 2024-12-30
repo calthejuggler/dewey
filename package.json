@@ -1,15 +1,19 @@
 {
-  "name": "dewey",
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "openai": "^4.77.0",
-    "zod": "^3.24.1"
-  }
+	"name": "dewey",
+	"module": "index.ts",
+	"type": "module",
+	"scripts": {
+		"format": "biome check --write"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {
+		"openai": "^4.77.0",
+		"zod": "^3.24.1"
+	}
 }
