@@ -5,10 +5,9 @@ import { z } from "zod";
 export const openai = new OpenAI();
 
 export const responseSchema = z.object({
-	mainTitle: z.object({
-		currentName: z.string(),
-		newName: z.string(),
-	}),
+	oldMainTitleName: z.string(),
+	newMainTitleName: z.string(),
+	newNameWithoutExtension: z.string(),
 });
 
 export const responseFormat = zodResponseFormat(responseSchema, "event");
