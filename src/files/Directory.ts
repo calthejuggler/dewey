@@ -1,9 +1,9 @@
-import { Logger } from "../logger";
-import path from "node:path";
 import fs from "node:fs";
-import { MovieFile } from "./MovieFile";
-import { INPUT_DIR, OUTPUT_DIR, STALE_TIME_MS } from "../envvars";
+import path from "node:path";
 import { getMovieName } from "../ask";
+import { INPUT_DIR, OUTPUT_DIR, STALE_TIME_MS } from "../envvars";
+import { Logger } from "../logger";
+import { MovieFile } from "./MovieFile";
 
 const logger = Logger.instance;
 

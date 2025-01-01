@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+import { INPUT_DIR } from "../envvars";
 import { Logger } from "../logger";
 import type { Directory } from "./Directory";
 

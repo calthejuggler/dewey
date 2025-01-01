@@ -1,6 +1,6 @@
 import fs from "node:fs";
-import { Logger } from "../logger";
 import { INPUT_DIR } from "../envvars";
+import { Logger } from "../logger";
 
 const logger = Logger.instance;
 
