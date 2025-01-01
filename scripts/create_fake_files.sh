@@ -11,9 +11,9 @@
 #   EXAMPLE_MOVIE_t05.mkv
 #
 
-# If the user didn't provide the count, default to 5
-COUNT=${1:-5}
-PREFIX="SHAUN_OF_THE_DEAD"
+# If the user didn't provide the count, default to 12
+COUNT=${1:-12}
+PREFIX="BCK_TO_TH_FTR_III"
 
 echo "Creating directory: $PREFIX"
 
