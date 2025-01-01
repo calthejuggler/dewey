@@ -66,7 +66,9 @@ export class Directory {
 			logger.error(
 				`Error initializing output dir for ${this._newName}:`,
 				error,
+				"- Ignoring...",
 			);
+			this._completed = true;
 		}
 	}
 
