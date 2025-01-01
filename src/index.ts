@@ -13,14 +13,17 @@ class MovieFile {
 	private _extension: string;
 
 	constructor(parent: Directory, fileName: string) {
+		logger.debug(`Creating MovieFile object for "${fileName}"`);
 		this._parent = parent;
 		this._rawName = fileName.split(".").slice(0, -1).join(".");
 		this._extension = fileName.split(".").at(-1) ?? "";
+		logger.debug(`Created MovieFile for "${fileName}"`);
 	}
 
 	public rename(newPath: string) {
 		logger.debug(`Copying file: ${this.fileName} to ${newPath}`);
 		fs.copyFileSync(path.join(this.path), newPath);
+		logger.debug(`Copied file: ${this.fileName} to ${newPath}`);
 
 		this._parent.deleteFile(this.fileName);
 	}
@@ -53,6 +56,7 @@ class Directory {
 	private _completed = false;
 
 	constructor(public name: string) {
+		logger.debug(`Creating Directory object for "${name}"`);
 		this._dirname = name;
 		this._path = path.join(INPUT_DIR, name);
 
@@ -81,7 +85,9 @@ class Directory {
 		logger.info(`Initializing output dir for ${this._newName}`);
 
 		try {
+			logger.debug(`Creating output dir: ${this._newName}`);
 			fs.mkdirSync(path.join(OUTPUT_DIR, this._newName));
+			logger.debug(`Created extras dir: ${this._newName}`);
 			fs.mkdirSync(path.join(OUTPUT_DIR, this._newName, "extras"));
 
 			this._outputInitialized = true;
@@ -94,13 +100,21 @@ class Directory {
 	}
 
 	setModified(mtime: number) {
-		if (mtime > this._lastModified) this._lastModified = mtime;
+		if (mtime <= this._lastModified) {
+			logger.debug(`Not updating modified time, mtime is ${mtime}`);
+			return;
+		}
+
+		logger.debug(`Setting modified time for ${this._dirname} to ${mtime}`);
+		this._lastModified = mtime;
 	}
 
 	public updateFiles() {
-		const files = fs.readdirSync(this._path);
-
 		logger.info(`Updating files for dir: ${this._dirname}`);
+
+		logger.debug(`Reading files from ${this._path}`);
+		const files = fs.readdirSync(this._path);
+		logger.debug(`Read ${files.length} files from ${this._path}`);
 
 		for (const file of files) {
 			if (!file.includes(".")) {
@@ -108,7 +122,10 @@ class Directory {
 				continue;
 			}
 
+			logger.debug(`Getting stats for file: ${file}`);
 			const stats = fs.statSync(path.join(this._path, file));
+			logger.debug(`Got stats for file: ${file}`);
+			logger.debug("STATS", stats);
 
 			if (stats.isDirectory()) {
 				logger.warn(`Found directory: ${file}... Ignoring...`);
@@ -127,6 +144,7 @@ class Directory {
 		) {
 			logger.info(`Starting rename process for ${this._newName}`);
 
+			logger.debug(`Getting main title file: ${this._mainTitleName}`);
 			const mainTitle = this._files.get(this._mainTitleName ?? "");
 
 			if (mainTitle === undefined) {
@@ -134,6 +152,8 @@ class Directory {
 
 				return;
 			}
+
+			logger.debug(`Got main title file: ${this._mainTitleName}`);
 
 			if (!this._newName) {
 				logger.error("New name is null, undefined or empty. Skipping...");
@@ -147,18 +167,19 @@ class Directory {
 				return;
 			}
 
+			logger.info(`Renaming main title file: ${mainTitle.fileName}`);
 			mainTitle.rename(
 				path.join(OUTPUT_DIR, this._newName, this._newNameWithExtension),
 			);
-
 			logger.info(`Renamed and moved main title file: ${mainTitle.fileName}`);
 
+			logger.info("Moving extra files to extras dir");
 			for (const file of this._files.values()) {
+				logger.debug(`Renaming extra file: ${file.fileName}`);
 				file.rename(
 					path.join(OUTPUT_DIR, this._newName ?? "", "extras", file.fileName),
 				);
-
-				logger.info(`Renamed and moved extra file: ${file.fileName}`);
+				logger.debug(`Renamed and moved extra file: ${file.fileName}`);
 			}
 
 			logger.info(`Completed directory: ${this._dirname}`);
@@ -167,19 +188,25 @@ class Directory {
 	}
 
 	public addFile(fileName: string) {
-		if (this._files.has(fileName)) return this._files.get(fileName);
+		logger.debug(`Adding file: ${fileName}`);
+		if (this._files.has(fileName)) {
+			logger.debug(`File already exists, returning existing file: ${fileName}`);
+			return this._files.get(fileName);
+		}
 
+		logger.debug(`Setting file: ${fileName}`);
 		this._files.set(fileName, new MovieFile(this, fileName));
 	}
 
 	public deleteFile(fileName: string) {
+		logger.debug(`Deleting file: ${fileName}`);
 		if (!this._files.has(fileName)) {
 			logger.warn(`Tried to delete file that doesn't exist: ${fileName}`);
 		}
 
-		logger.debug(`Deleting file: ${fileName}`);
-
 		this._files.delete(fileName);
+
+		logger.debug(`Deleted file: ${fileName}`);
 	}
 
 	public get dirname() {
@@ -211,6 +238,7 @@ class InputDirWatcher {
 	}
 
 	public async watch() {
+		logger.info("Starting input dir watcher...");
 		while (true) {
 			logger.info("Checking input dir...");
 
@@ -244,10 +272,15 @@ class Dewey {
 
 	public addDir(dirname: string) {
 		if (this._dirs.has(dirname)) {
+			logger.debug(
+				`Directory already exists, returning existing directory: ${dirname}`,
+			);
 			const dir = this._dirs.get(dirname);
 
 			return dir;
 		}
+
+		logger.debug(`Setting directory in Dewey state: ${dirname}`);
 
 		this._dirs.set(dirname, new Directory(dirname));
 
@@ -255,8 +288,10 @@ class Dewey {
 	}
 
 	public checkDirs() {
+		logger.info("Checking Dewey state for completed directories...");
 		for (const dir of this._dirs.values()) {
 			if (dir.isCompleted) continue;
+			logger.debug(`Updating files for directory: ${dir.name}`);
 			dir.updateFiles();
 		}
 	}
@@ -278,8 +313,6 @@ async function main() {
 		logger.error("There was an error checking the environment:", error);
 		return;
 	}
-
-	logger.info("Initialising Dewey state...");
 
 	logger.info("Watching input dir...");
 	const watcher = InputDirWatcher.instance;
