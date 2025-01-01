@@ -2,11 +2,10 @@ import type { ResponseFormatJSONSchema } from "openai/resources/shared";
 import { Logger } from "./logger";
 import { openai, responseFormat, responseSchema } from "./openai/client";
 import { SYSTEM_PROMPT } from "./prompts";
-import type path from "node:path";
 
 const logger = Logger.instance;
 
-const ask = (
+const promptOpenAI = (
 	systemPrompt: string,
 	userPrompt: string,
 	format: ResponseFormatJSONSchema,
@@ -35,7 +34,7 @@ export const getMovieName = async (
 		files.map((file) => file.fileName),
 	);
 
-	const completion = await ask(
+	const completion = await promptOpenAI(
 		SYSTEM_PROMPT,
 		JSON.stringify(files),
 		responseFormat,
