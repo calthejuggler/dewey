@@ -46,8 +46,4 @@ export class MovieFile {
 	public get path() {
 		return path.join(INPUT_DIR, this._parent.dirname, this.fileName);
 	}
-
-	public get locked() {
-		return this._parent.isLocked;
-	}
 }

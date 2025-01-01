@@ -12,7 +12,6 @@ export class Directory {
 	private _dirname: string;
 	private _path: string;
 	private _files: Map<string, MovieFile> = new Map();
-	private _locked = true;
 	private _lastModified = 0;
 
 	private _newName: string | null = null;
@@ -196,10 +195,6 @@ export class Directory {
 
 	public get dirname() {
 		return this._dirname;
-	}
-
-	public get isLocked() {
-		return this._locked;
 	}
 
 	public get isCompleted() {
