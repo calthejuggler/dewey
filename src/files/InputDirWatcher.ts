@@ -34,7 +34,7 @@ export class InputDirWatcher {
 			const mainContents = await fs.readdir(INPUT_DIR);
 
 			for (const dir of mainContents) {
-				Dewey.instance.addDir(dir);
+				await Dewey.instance.addDir(dir);
 			}
 
 			Dewey.instance.checkDirs();

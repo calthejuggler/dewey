@@ -18,7 +18,7 @@ export class Dewey {
 		return Dewey.#instance;
 	}
 
-	public addDir(dirname: string) {
+	public async addDir(dirname: string) {
 		if (this._dirs.has(dirname)) {
 			logger.debug(
 				`Directory already exists, returning existing directory: ${dirname}`,
@@ -30,7 +30,7 @@ export class Dewey {
 
 		logger.debug(`Setting directory in Dewey state: ${dirname}`);
 
-		this._dirs.set(dirname, new Directory(dirname));
+		this._dirs.set(dirname, await Directory.create(dirname));
 
 		return this._dirs.get(dirname);
 	}

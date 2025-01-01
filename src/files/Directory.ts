@@ -3,6 +3,7 @@ import path from "node:path";
 import { getMovieName } from "../ask";
 import { INPUT_DIR, OUTPUT_DIR, STALE_TIME_MS } from "../envvars";
 import { Logger } from "../logger";
+import type { MovieNameResponse } from "../openai/client";
 import { MovieFile } from "./MovieFile";
 
 const logger = Logger.instance;
@@ -21,36 +22,47 @@ export class Directory {
 	private _outputInitialized = false;
 	private _completed = false;
 
-	constructor(public name: string) {
+	private constructor(public name: string) {
 		logger.debug(`Creating Directory object for "${name}"`);
 		this._dirname = name;
 		this._path = path.join(INPUT_DIR, name);
 
 		this.updateFiles();
+	}
 
-		getMovieName(
+	static async create(name: string) {
+		const dir = new Directory(name);
+		await dir._initializeDir();
+
+		return dir;
+	}
+
+	private async _initializeDir() {
+		this.updateFiles();
+
+		const res = await getMovieName(
 			Array.from(this._files.values()).map((value) => ({
 				fileName: value.fileName,
 				fileSize: value.fileSize,
 			})),
-		).then((res) => {
-			this._newName = res.newNameWithoutExtension;
-			this._newNameWithExtension = res.newMainTitleName;
-			this._mainTitleName = res.oldMainTitleName;
+		);
 
-			if (!this._files.has(res.oldMainTitleName)) {
-				logger.error(
-					`OpenAI has returned a main title name that doesn't exist in the input dir: ${res.oldMainTitleName}. Skipping dir...`,
-				);
-
-				return;
-			}
-
-			this._initializeOutput();
-		});
+		this._initializeOutput(res);
 	}
 
-	private _initializeOutput() {
+	private _initializeOutput(res: MovieNameResponse) {
+		this._newName = res.newNameWithoutExtension;
+		this._newNameWithExtension = res.newMainTitleName;
+		this._mainTitleName = res.oldMainTitleName;
+
+		if (!this._files.has(res.oldMainTitleName)) {
+			logger.error(
+				`OpenAI has returned a main title name that doesn't exist in the input dir: ${res.oldMainTitleName}. Skipping dir...`,
+			);
+
+			return;
+		}
+
 		if (this._newName === null) return;
 
 		logger.info(`Initializing output dir for ${this._newName}`);

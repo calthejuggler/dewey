@@ -9,5 +9,6 @@ export const responseSchema = z.object({
 	newMainTitleName: z.string(),
 	newNameWithoutExtension: z.string(),
 });
+export type MovieNameResponse = z.infer<typeof responseSchema>;
 
 export const responseFormat = zodResponseFormat(responseSchema, "event");
