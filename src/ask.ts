@@ -1,7 +1,9 @@
-import type { BunFile } from "bun";
 import type { ResponseFormatJSONSchema } from "openai/resources/shared";
+import { Logger } from "./logger";
 import { openai, responseFormat, responseSchema } from "./openai/client";
 import { SYSTEM_PROMPT } from "./prompts";
+
+const logger = Logger.instance;
 
 const ask = (
 	systemPrompt: string,
@@ -23,26 +25,20 @@ const ask = (
 		],
 	});
 
-export const getNewMovieName = async (
-	files: { name: string; file: BunFile }[],
-) => {
+export const getMovieName = async (fileNames: string[]) => {
+	logger.info("Asking OpenAI for movie name for files:", fileNames);
+
 	const completion = await ask(
 		SYSTEM_PROMPT,
-		JSON.stringify(files),
+		JSON.stringify(fileNames),
 		responseFormat,
 	);
 
-	const json = JSON.parse(completion.choices[0].message.content ?? "{}");
+	const json = JSON.parse(completion.choices[0]?.message.content ?? "{}");
 
-	const { mainTitle } = responseSchema.parse(json);
+	const parsed = responseSchema.parse(json);
 
-	const title = files.find((file) => file.name === mainTitle.currentName);
+	logger.debug("OpenAI response:", JSON.stringify(parsed));
 
-	if (!title) {
-		throw new Error(
-			`OpenAI responded with a title name that doesn't exist: ${mainTitle.currentName}`,
-		);
-	}
-
-	return { mainTitle, currentFile: title.file };
+	return parsed;
 };
