@@ -1,7 +1,9 @@
+import { LOG_LEVEL } from "./envvars";
+
 enum LogLevel {
-	INFO = "INFO",
 	ERROR = "ERROR",
 	WARN = "WARN",
+	INFO = "INFO",
 	DEBUG = "DEBUG",
 }
 
@@ -18,23 +20,47 @@ export class Logger {
 		return Logger.#instance;
 	}
 
-	createMessage(logLevel: LogLevel, ...messages: unknown[]) {
+	private _checkLogLevel(logLevel: LogLevel) {
+		switch (logLevel) {
+			// Always log errors
+			case LogLevel.ERROR: {
+				return true;
+			}
+			case LogLevel.WARN: {
+				return (
+					LOG_LEVEL === "DEBUG" || LOG_LEVEL === "INFO" || LOG_LEVEL === "WARN"
+				);
+			}
+			case LogLevel.INFO: {
+				return LOG_LEVEL === "DEBUG" || LOG_LEVEL === "INFO";
+			}
+			case LogLevel.DEBUG: {
+				return LOG_LEVEL === "DEBUG";
+			}
+		}
+	}
+
+	private _createMessage(logLevel: LogLevel, ...messages: unknown[]) {
 		return `${new Date().toISOString()} - [${logLevel}]: ${messages.join(" ")}`;
 	}
 
 	info(...messages: unknown[]) {
-		console.log(this.createMessage(LogLevel.INFO, ...messages));
+		if (!this._checkLogLevel(LogLevel.INFO)) return;
+		console.log(this._createMessage(LogLevel.INFO, ...messages));
 	}
 
 	error(...messages: unknown[]) {
-		console.error(this.createMessage(LogLevel.ERROR, ...messages));
+		if (!this._checkLogLevel(LogLevel.ERROR)) return;
+		console.error(this._createMessage(LogLevel.ERROR, ...messages));
 	}
 
 	warn(...messages: unknown[]) {
-		console.warn(this.createMessage(LogLevel.WARN, ...messages));
+		if (!this._checkLogLevel(LogLevel.WARN)) return;
+		console.warn(this._createMessage(LogLevel.WARN, ...messages));
 	}
 
 	debug(...messages: unknown[]) {
-		console.debug(this.createMessage(LogLevel.DEBUG, ...messages));
+		if (!this._checkLogLevel(LogLevel.DEBUG)) return;
+		console.debug(this._createMessage(LogLevel.DEBUG, ...messages));
 	}
 }

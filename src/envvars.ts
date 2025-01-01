@@ -5,6 +5,8 @@ export const STALE_TIME_MS = process.env.STALE_TIME_MS
 	? Number(process.env.STALE_TIME_MS)
 	: 1000 * 30;
 
+export const LOG_LEVEL = process.env.LOG_LEVEL ?? "INFO";
+
 export default {
 	INPUT_DIR,
 	OUTPUT_DIR,
