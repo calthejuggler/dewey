@@ -9,6 +9,7 @@ export class InputDirWatcher {
 	static #instance: InputDirWatcher;
 
 	private _interval = 10000;
+	private _shouldWatch = true;
 
 	private constructor() {}
 
@@ -20,9 +21,14 @@ export class InputDirWatcher {
 		return InputDirWatcher.#instance;
 	}
 
+	public stopWatching() {
+		logger.info("Stopping input dir watcher...");
+		this._shouldWatch = false;
+	}
+
 	public async watch() {
 		logger.info("Starting input dir watcher...");
-		while (true) {
+		while (this._shouldWatch) {
 			logger.info("Checking input dir...");
 
 			const mainContents = fs.readdirSync(INPUT_DIR);
@@ -35,5 +41,6 @@ export class InputDirWatcher {
 
 			await new Promise((resolve) => setTimeout(resolve, this._interval));
 		}
+		logger.info("Stopped input dir watcher...");
 	}
 }

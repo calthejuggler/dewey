@@ -8,6 +8,8 @@ async function main() {
 	process.on("SIGINT", () => {
 		logger.info("Received SIGINT, exiting...");
 
+		watcher.stopWatching();
+
 		process.exit(0);
 	});
 
