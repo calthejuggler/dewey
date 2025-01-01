@@ -46,6 +46,13 @@ export class Directory {
 			})),
 		);
 
+		if (res === undefined) {
+			logger.error(
+				`OpenAI response is undefined, skipping dir ${this._dirname}...`,
+			);
+			return;
+		}
+
 		this._initializeOutput(res);
 	}
 
