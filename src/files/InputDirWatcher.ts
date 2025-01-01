@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import { Dewey } from "../dewey";
 import { INPUT_DIR } from "../envvars";
 import { Logger } from "../logger";
@@ -31,7 +31,7 @@ export class InputDirWatcher {
 		while (this._shouldWatch) {
 			logger.info("Checking input dir...");
 
-			const mainContents = fs.readdirSync(INPUT_DIR);
+			const mainContents = await fs.readdir(INPUT_DIR);
 
 			for (const dir of mainContents) {
 				Dewey.instance.addDir(dir);
