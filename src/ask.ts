@@ -25,12 +25,14 @@ const ask = (
 		],
 	});
 
-export const getMovieName = async (fileNames: string[]) => {
-	logger.info("Asking OpenAI for movie name for files:", fileNames);
+export const getMovieName = async (
+	files: { fileName: string; fileSize: number }[],
+) => {
+	logger.info("Asking OpenAI for movie name for files:", files);
 
 	const completion = await ask(
 		SYSTEM_PROMPT,
-		JSON.stringify(fileNames),
+		JSON.stringify(files),
 		responseFormat,
 	);
 

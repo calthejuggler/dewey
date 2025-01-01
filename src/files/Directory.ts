@@ -28,7 +28,12 @@ export class Directory {
 
 		this.updateFiles();
 
-		getMovieName(Array.from(this._files.keys())).then((res) => {
+		getMovieName(
+			Array.from(this._files.values()).map((value) => ({
+				fileName: value.fileName,
+				fileSize: value.fileSize,
+			})),
+		).then((res) => {
 			this._newName = res.newNameWithoutExtension;
 			this._newNameWithExtension = res.newMainTitleName;
 			this._mainTitleName = res.oldMainTitleName;

@@ -10,12 +10,20 @@ export class MovieFile {
 	private _parent: Directory;
 	private _rawName: string;
 	private _extension: string;
+	private _fileSize: number;
 
 	constructor(parent: Directory, fileName: string) {
 		logger.debug(`Creating MovieFile object for "${fileName}"`);
 		this._parent = parent;
 		this._rawName = fileName.split(".").slice(0, -1).join(".");
 		this._extension = fileName.split(".").at(-1) ?? "";
+
+		const stats = fs.statSync(
+			path.join(INPUT_DIR, this._parent.dirname, fileName),
+		);
+
+		this._fileSize = stats.size;
+
 		logger.debug(`Created MovieFile for "${fileName}"`);
 	}
 
@@ -25,6 +33,10 @@ export class MovieFile {
 		logger.debug(`Copied file: ${this.fileName} to ${newPath}`);
 
 		this._parent.deleteFile(this.fileName);
+	}
+
+	public get fileSize() {
+		return this._fileSize;
 	}
 
 	public get fileName() {
