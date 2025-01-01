@@ -167,6 +167,7 @@ export class Directory {
 			}
 
 			logger.info(`Completed directory: ${this._dirname}`);
+			fs.rmdirSync(this._path);
 			this._completed = true;
 		}
 	}

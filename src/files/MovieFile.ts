@@ -29,7 +29,13 @@ export class MovieFile {
 
 	public rename(newPath: string) {
 		logger.debug(`Copying file: ${this.fileName} to ${newPath}`);
+		if (fs.existsSync(newPath)) {
+			logger.warn(`File already exists, skipping: ${newPath}`);
+			return;
+		}
+
 		fs.copyFileSync(path.join(this.path), newPath);
+		fs.unlinkSync(path.join(this.path));
 		logger.debug(`Copied file: ${this.fileName} to ${newPath}`);
 
 		this._parent.deleteFile(this.fileName);
