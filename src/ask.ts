@@ -2,6 +2,7 @@ import type { ResponseFormatJSONSchema } from "openai/resources/shared";
 import { Logger } from "./logger";
 import { openai, responseFormat, responseSchema } from "./openai/client";
 import { SYSTEM_PROMPT } from "./prompts";
+import type path from "node:path";
 
 const logger = Logger.instance;
 
@@ -28,7 +29,11 @@ const ask = (
 export const getMovieName = async (
 	files: { fileName: string; fileSize: number }[],
 ) => {
-	logger.info("Asking OpenAI for movie name for files:", files);
+	logger.info("Asking OpenAI for movie name...", files);
+	logger.debug(
+		"Filenames:",
+		files.map((file) => file.fileName),
+	);
 
 	const completion = await ask(
 		SYSTEM_PROMPT,
@@ -36,11 +41,23 @@ export const getMovieName = async (
 		responseFormat,
 	);
 
-	const json = JSON.parse(completion.choices[0]?.message.content ?? "{}");
+	let parsedContent: Record<string, unknown>;
 
-	const parsed = responseSchema.parse(json);
+	try {
+		parsedContent = JSON.parse(completion.choices[0]?.message.content ?? "{}");
+	} catch (error) {
+		logger.error("Error parsing JSON:", error);
+		parsedContent = {};
+	}
 
-	logger.debug("OpenAI response:", JSON.stringify(parsed));
+	const result = responseSchema.safeParse(parsedContent);
 
-	return parsed;
+	logger.debug("OpenAI Zod response:", JSON.stringify(result));
+
+	if (!result.success) {
+		logger.error("OpenAI Zod parsing failed:", result.error);
+		return;
+	}
+
+	return result.data;
 };
