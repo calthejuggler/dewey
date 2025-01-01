@@ -8,7 +8,7 @@ const logger = Logger.instance;
 export class InputDirWatcher {
 	static #instance: InputDirWatcher;
 
-	_interval = 10000;
+	private _interval = 10000;
 
 	private constructor() {}
 
