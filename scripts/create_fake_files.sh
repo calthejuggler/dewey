@@ -11,9 +11,8 @@
 #   EXAMPLE_MOVIE_t05.mkv
 #
 
-# If the user didn't provide the count, default to 12
-COUNT=${1:-12}
-PREFIX="BCK_TO_TH_FTR_III"
+PREFIX=${1:-BCK_TO_TH_FTR_III}
+COUNT=${2:-12}
 
 echo "Creating directory: $PREFIX"
 
