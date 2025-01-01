@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { Dewey } from "../dewey";
 import { INPUT_DIR } from "../envvars";
 import { Logger } from "../logger";
 
