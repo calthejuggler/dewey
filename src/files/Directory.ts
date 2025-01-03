@@ -128,6 +128,18 @@ export class Directory {
 			this.addFile(file);
 		}
 
+		if (this._lastModified >= Date.now() - STALE_TIME_MS) {
+			logger.info(
+				`Last modified too recently (${this._lastModified}), waiting...`,
+			);
+		}
+		if (!this._outputInitialized) {
+			logger.warn("Output not initialized, waiting...");
+		}
+		if (this._completed) {
+			logger.error("Directory is already completed, skipping...");
+		}
+
 		if (
 			this._lastModified < Date.now() - STALE_TIME_MS &&
 			this._outputInitialized &&
