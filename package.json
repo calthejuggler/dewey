@@ -4,11 +4,13 @@
 	"type": "module",
 	"scripts": {
 		"format": "biome check --write",
-		"check": "biome check && tsc --noEmit"
+		"check": "biome check && tsc --noEmit",
+		"prepare": "husky || true"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"husky": "^9.1.7"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"

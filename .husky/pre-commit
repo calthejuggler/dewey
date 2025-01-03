@@ -1,0 +1,2 @@
+biome check $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g') --write
+git update-index --again
