@@ -1,4 +1,4 @@
-![The Dewey logo. An AI generated image of an owl sat atop a library book](https://github.com/user-attachments/assets/f92ba668-4485-4c2c-a12f-4f5911846db3)
+<div align="center"><img alt="The Dewey logo. An AI generated image of an owl sat atop a library book" src="https://github.com/user-attachments/assets/f92ba668-4485-4c2c-a12f-4f5911846db3" width="400px" /></div>
 
 # Dewey
 
