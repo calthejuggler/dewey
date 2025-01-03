@@ -1,3 +1,5 @@
+![The Dewey logo. An AI generated image of an owl sat atop a library book](https://github.com/user-attachments/assets/f92ba668-4485-4c2c-a12f-4f5911846db3)
+
 # Dewey
 
 Hey there! Welcome to **Dewey**. My solution for renaming and organising movies
