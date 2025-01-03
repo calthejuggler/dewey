@@ -33,40 +33,38 @@ moves/renames the files to a structured output directory.
     directory.  
 - [x]  **Configurable Logging** – Supports different log levels (DEBUG, INFO, WARN,
     ERROR).  
-- [ ] **Docker Support** – Easily run Dewey in a Docker container.
-- [ ] **Docker Compose Support** – Easily run Dewey in a Docker Compose
+- [x] **Docker Support** – Easily run Dewey in a Docker container.
+- [x] **Docker Compose Support** – Easily run Dewey in a Docker Compose
 - [ ] **Other AI Integrations** – Support for other AI services.
 - [ ] **In Place Renaming** – Rename files in place instead of moving them.
 - [ ] **Copy Only** – Copy files instead of moving them.
 
 ## Installation
 
-### Option 1: Using Docker
+### Option 1: Docker compose
 
-#### COMING SOON
+```yaml
+services:
+  dewey:
+    image: calthejuggler/dewey:latest
+    environment:
+      - OPENAI_API_KEY=YOUR_API_KEY
+      - LOG_LEVEL=DEBUG
+    volumes:
+      - /path/to/input/dir:/input
+      - /path/to/output/dir:/output
+```
 
-<!-- 1. **Clone this repository**: -->
-<!---->
-<!--     ```bash -->
-<!--        git clone https://github.com/your-username/dewey.git -->
-<!--        cd dewey -->
-<!--     ``` -->
-<!---->
-<!-- 2. **Build the Docker image**: -->
-<!---->
-<!--     ```bash -->
-<!--     docker build -t dewey:latest . -->
-<!--     ``` -->
-<!---->
-<!-- 3. **Run the Docker container**: -->
-<!---->
-<!--     ```bash -->
-<!--     docker run -d \ -->
-<!--       -v $(pwd)/input:/input \ -->
-<!--       -v $(pwd)/output:/output \ -->
-<!--       -e LOG_LEVEL=INFO \ -->
-<!--       dewey:latest -->
-<!--     ``` -->
+### Option 2: Docker
+
+```bash
+docker run -d \
+  -v $(pwd)/input:/input \
+  -v $(pwd)/output:/output \
+  -e OPENAI_API_KEY=YOUR_API_KEY \
+  -e LOG_LEVEL=INFO \
+  calthejuggler/dewey:latest
+```
 
 ### Option 2: Using Bun locally
 
@@ -100,20 +98,6 @@ The application reads environment variables for certain configuration values:
     “stale” and ready for renaming (defaults to 30000, i.e., 30 seconds).
 - `LOG_LEVEL`: Controls the logging verbosity. Allowed values: "DEBUG", "INFO",
     "WARN", "ERROR" (defaults to "INFO").
-
-<!-- When running via Docker, you can pass them with -e, for example: -->
-<!---->
-<!-- ```bash -->
-<!-- docker run -d \ -->
-<!--   -v $(pwd)/input:/input \ -->
-<!--   -v $(pwd)/output:/output \ -->
-<!--   -e INPUT_DIR=/input \ -->
-<!--   -e OUTPUT_DIR=/output \ -->
-<!--   -e STALE_TIME_MS=60000 \ -->
-<!--   -e LOG_LEVEL=DEBUG \ -->
-<!--   dewey:latest -->
-<!-- ``` -->
-<!---->
 
 ## License
 
