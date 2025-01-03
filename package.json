@@ -1,22 +1,20 @@
 {
 	"name": "dewey",
 	"module": "index.ts",
-	"type": "module",
+	"dependencies": {
+		"openai": "^4.77.0",
+		"zod": "^3.24.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/bun": "latest",
+		"husky": "^9.1.7",
+		"typescript": "^5.7.2"
+	},
 	"scripts": {
 		"format": "biome check --write",
 		"check": "biome ci && tsc --noEmit",
 		"prepare": "husky || true"
 	},
-	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"@types/bun": "latest",
-		"husky": "^9.1.7"
-	},
-	"peerDependencies": {
-		"typescript": "^5.0.0"
-	},
-	"dependencies": {
-		"openai": "^4.77.0",
-		"zod": "^3.24.1"
-	}
+	"type": "module"
 }
