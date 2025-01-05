@@ -16,7 +16,6 @@ export class Directory {
 
 	private _newName: string | null = null;
 	private _newNameWithExtension: string | null = null;
-	private _mainTitleName: string | null = null;
 
 	private _outputInitialized = false;
 	private _completed = false;
@@ -59,7 +58,6 @@ export class Directory {
 	private _initializeOutput(res: MovieNameResponse) {
 		this._newName = res.newNameWithoutExtension;
 		this._newNameWithExtension = res.newMainTitleName;
-		this._mainTitleName = res.oldMainTitleName;
 
 		if (!this._files.has(res.oldMainTitleName)) {
 			logger.error(
@@ -98,6 +96,20 @@ export class Directory {
 
 		logger.debug(`Setting modified time for ${this._dirname} to ${mtime}`);
 		this._lastModified = mtime;
+	}
+
+	private getLargestFile() {
+		let largestFile: MovieFile | null = null;
+
+		for (const file of this._files.values()) {
+			if (largestFile === null) largestFile = file;
+
+			if (file.fileSize > largestFile.fileSize) {
+				largestFile = file;
+			}
+		}
+
+		return largestFile;
 	}
 
 	public updateFiles() {
@@ -147,16 +159,16 @@ export class Directory {
 		) {
 			logger.info(`Starting rename process for ${this._newName}`);
 
-			logger.debug(`Getting main title file: ${this._mainTitleName}`);
-			const mainTitle = this._files.get(this._mainTitleName ?? "");
+			logger.debug("Getting main title file...");
+			const largestFile = this.getLargestFile();
 
-			if (mainTitle === undefined) {
-				logger.error(`Could not find main title file: ${this._mainTitleName}`);
+			if (largestFile == null) {
+				logger.error("Could not find main title file");
 
 				return;
 			}
 
-			logger.debug(`Got main title file: ${this._mainTitleName}`);
+			logger.debug(`Got main title file: ${largestFile.fileName}`);
 
 			if (!this._newName) {
 				logger.error("New name is null, undefined or empty. Skipping...");
@@ -170,11 +182,11 @@ export class Directory {
 				return;
 			}
 
-			logger.info(`Renaming main title file: ${mainTitle.fileName}`);
-			mainTitle.rename(
+			logger.info(`Renaming main title file: ${largestFile.fileName}`);
+			largestFile.rename(
 				path.join(OUTPUT_DIR, this._newName, this._newNameWithExtension),
 			);
-			logger.info(`Renamed and moved main title file: ${mainTitle.fileName}`);
+			logger.info(`Renamed and moved main title file: ${largestFile.fileName}`);
 
 			logger.info("Moving extra files to extras dir");
 			for (const file of this._files.values()) {
