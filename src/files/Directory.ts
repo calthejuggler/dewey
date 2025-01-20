@@ -96,7 +96,7 @@ export class Directory {
 	}
 
 	public updateFiles() {
-		logger.info(`Updating files for dir: ${this._dirname}`);
+		logger.info(`Updating files for dir: ${this._newName ?? this._dirname}`);
 
 		logger.debug(`Reading files from ${this._path}`);
 		const files = fs.readdirSync(this._path);
