@@ -18,4 +18,4 @@ a list of potential features/bugfixes.
 
 ## Bugfixes
 
-- [ ] Only create extras dir if there are more than 1 file
+- [x] Only create extras dir if there are more than 1 file

@@ -57,8 +57,11 @@ export class Directory {
 		try {
 			logger.debug(`Creating output dir: ${this._newName}`);
 			fs.mkdirSync(path.join(OUTPUT_DIR, this._newName));
-			logger.debug(`Created extras dir: ${this._newName}`);
-			fs.mkdirSync(path.join(OUTPUT_DIR, this._newName, "extras"));
+
+			if (this._files.size > 1) {
+				logger.debug(`Creating extras dir: ${this._newName}`);
+				fs.mkdirSync(path.join(OUTPUT_DIR, this._newName, "extras"));
+			}
 
 			this._outputInitialized = true;
 		} catch (error) {
@@ -168,13 +171,15 @@ export class Directory {
 			);
 			logger.info(`Renamed and moved main title file: ${largestFile.fileName}`);
 
-			logger.info("Moving extra files to extras dir");
-			for (const file of this._files.values()) {
-				logger.debug(`Renaming extra file: ${file.fileName}`);
-				file.rename(
-					path.join(OUTPUT_DIR, this._newName ?? "", "extras", file.fileName),
-				);
-				logger.debug(`Renamed and moved extra file: ${file.fileName}`);
+			if (this._files.size > 0) {
+				logger.info("Moving extra files to extras dir");
+				for (const file of this._files.values()) {
+					logger.debug(`Renaming extra file: ${file.fileName}`);
+					file.rename(
+						path.join(OUTPUT_DIR, this._newName ?? "", "extras", file.fileName),
+					);
+					logger.debug(`Renamed and moved extra file: ${file.fileName}`);
+				}
 			}
 
 			logger.info(`Completed directory: ${this._dirname}`);
