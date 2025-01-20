@@ -5,9 +5,7 @@ import { z } from "zod";
 export const openai = new OpenAI();
 
 export const responseSchema = z.object({
-	oldMainTitleName: z.string(),
-	newMainTitleName: z.string(),
-	newNameWithoutExtension: z.string(),
+	newTitle: z.string(),
 });
 export type MovieNameResponse = z.infer<typeof responseSchema>;
 
