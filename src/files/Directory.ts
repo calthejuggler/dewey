@@ -15,7 +15,6 @@ export class Directory {
 	private _lastModified = 0;
 
 	private _newName: string | null = null;
-	private _newNameWithExtension: string | null = null;
 
 	private _outputInitialized = false;
 	private _completed = false;
@@ -36,14 +35,7 @@ export class Directory {
 	}
 
 	private async _initializeDir() {
-		this.updateFiles();
-
-		const res = await getMovieName(
-			Array.from(this._files.values()).map((value) => ({
-				fileName: value.fileName,
-				fileSize: value.fileSize,
-			})),
-		);
+		const res = await getMovieName(this.dirname);
 
 		if (res === undefined) {
 			logger.error(
@@ -56,16 +48,7 @@ export class Directory {
 	}
 
 	private _initializeOutput(res: MovieNameResponse) {
-		this._newName = res.newNameWithoutExtension;
-		this._newNameWithExtension = res.newMainTitleName;
-
-		if (!this._files.has(res.oldMainTitleName)) {
-			logger.error(
-				`OpenAI has returned a main title name that doesn't exist in the input dir: ${res.oldMainTitleName}. Skipping dir...`,
-			);
-
-			return;
-		}
+		this._newName = res.newTitle;
 
 		if (this._newName === null) return;
 
@@ -175,16 +158,13 @@ export class Directory {
 				return;
 			}
 
-			if (!this._newNameWithExtension) {
-				logger.error(
-					"New name with extension is null, undefined or empty. Skipping...",
-				);
-				return;
-			}
-
 			logger.info(`Renaming main title file: ${largestFile.fileName}`);
 			largestFile.rename(
-				path.join(OUTPUT_DIR, this._newName, this._newNameWithExtension),
+				path.join(
+					OUTPUT_DIR,
+					this._newName,
+					`${this._newName}.${largestFile.extension}`,
+				),
 			);
 			logger.info(`Renamed and moved main title file: ${largestFile.fileName}`);
 
