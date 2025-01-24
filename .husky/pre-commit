@@ -1,2 +1,4 @@
-biome check $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g') --write
+biome check $(git diff --cached --name-only --diff-filter=ACMR \
+  | grep -E '\.(js|ts|jsx|tsx|json)$' \
+  | sed 's| |\\ |g') --write
 git update-index --again
