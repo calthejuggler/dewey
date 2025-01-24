@@ -52,6 +52,16 @@ export class Directory {
 
 		if (this._newName === null) return;
 
+		if (this._completed) {
+			logger.warn("Directory is already completed, skipping...");
+			return;
+		}
+
+		if (this._outputInitialized) {
+			logger.warn("Output is already initialized, skipping...");
+			return;
+		}
+
 		logger.info(`Initializing output dir for ${this._newName}`);
 
 		try {
