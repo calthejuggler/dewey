@@ -8,7 +8,7 @@ enum LogLevel {
 }
 
 export class Logger {
-	static #instance: Logger;
+	static #instance?: Logger;
 
 	private _currentLogLevel: LogLevel;
 
@@ -26,6 +26,10 @@ export class Logger {
 		}
 
 		return Logger.#instance;
+	}
+
+	public static resetInstance() {
+		Logger.#instance = undefined;
 	}
 
 	private _createMessage(logLevel: LogLevel, ...messages: unknown[]) {
