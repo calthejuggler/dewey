@@ -13,7 +13,7 @@
 	},
 	"scripts": {
 		"format": "biome check --fix --unsafe",
-		"check": "biome ci && tsc --noEmit",
+		"check": "biome ci && tsc --noEmit && bun test --coverage",
 		"prepare": "husky || true"
 	},
 	"type": "module"
