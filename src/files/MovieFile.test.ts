@@ -15,20 +15,6 @@ import path from "node:path";
 import type { Directory } from "./Directory";
 import { MovieFile } from "./MovieFile";
 
-const warnMock = mock();
-
-mock.module("../logger.ts", () => {
-	return {
-		Logger: {
-			instance: {
-				info: mock(),
-				debug: mock(),
-				warn: warnMock,
-			},
-		},
-	};
-});
-
 mock.module("../ask.ts", () => ({
 	getMovieName: mock(() => "Shaun of the Dead (2004)"),
 }));
