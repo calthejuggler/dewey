@@ -12,7 +12,7 @@ export class Directory {
 	private _dirname: string;
 	private _path: string;
 	private _files: Map<string, MovieFile> = new Map();
-	private _lastModified = 0;
+	private _lastModified = Date.now();
 
 	private _newName: string | null = null;
 
